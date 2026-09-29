@@ -79,7 +79,7 @@ Review against the three mandatory skills. Use the loaded skill definitions as y
 
 ### General Quality
 - Is error handling consistent with patterns elsewhere in the codebase?
-- Are there security-relevant issues (even if not a security review): obvious SQL injection, hardcoded credentials, user input passed to shell/eval?
+- Are there security-relevant issues (even if not a security review): obvious SQL injection, hardcoded credentials, user input passed to shell/eval, or credentials sent to a URL taken from external data (pagination `nextLink`, redirects, callbacks) without an origin check? Flag these even when the spec prescribes the behavior.
 - Is the code readable by someone who didn't write it?
 
 ## Severity Levels
@@ -94,6 +94,8 @@ Assign each finding one of these:
 ## What NOT to Do
 
 - Do not suggest features or scope beyond the task given to the responsible engineer.
+- If the brief marks an area as out of scope for this review, do not raise findings for it and do not let it affect the verdict. Record what you noticed under `### Notes for <owner>`.
+- If you cannot run a verification command (docker, migrations, tests), list it under `### Not verified`. Never suggest a check passed when you did not run it.
 - Do not nitpick style preferences that aren't violations of a defined convention.
 - Do not rewrite the code yourself — describe the problem precisely so the responsible engineer can fix it.
 - Do not flag something as a finding if you're uncertain. If you're genuinely unsure, note it as a question rather than a finding.

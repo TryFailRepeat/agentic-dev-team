@@ -40,7 +40,7 @@ Every deployment setup must include all of the following:
 
 ### docker-compose.yml
 - Service definition for the application
-- All required env vars wired from a `.env` file (never hardcoded values)
+- Every env var the service reads, required or optional, wired via `${VAR}` or `${VAR:-default}` (never hardcoded values). This includes non-secret toggles, because operators must be able to change them during an incident.
 - Volume definitions for any persistent storage
 - Health check configuration so dependent services wait properly
 - A local-development-friendly setup (e.g., bind mounts for hot reload if applicable)
@@ -67,6 +67,9 @@ Unless the spec or Tech Lead specifies otherwise:
 - Do not store secrets in files. Pipeline secrets live in Bitbucket repository variables. Runtime secrets are injected as environment variables.
 - Do not use `:latest` as an image tag in production deployments. Always use a specific version or commit hash.
 - Do not run containers as root unless there is a documented, unavoidable reason.
+- Do not call something a bug, pre-existing or silent without evidence (file:line, or a command and its output). If you did not verify the failure mode, write "suspected" and say what would confirm it.
+- If something you add creates a resource risk (memory, CPU, disk), fix it or escalate it before handoff. Do not ship it with only a note.
+- Do not run live or acceptance tests, deployments, or containers pointed at live external systems (e.g. Dataverse, shared databases, running services) without explicit permission from the human, relayed by the Tech Lead. If a check might change live data or state, stop and report it to the Tech Lead instead. A brief that doesn't mention permission does not grant it.
 
 ## When You're Blocked
 

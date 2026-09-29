@@ -63,6 +63,8 @@ The spec defines the domain model and the ubiquitous language. Implement them ex
 
 **Comments only where necessary.** Only when the WHY is non-obvious.
 
+**Keep methods composed.** Before finishing any method longer than ~20 lines, load `extract-method` and apply its checklist. Every method should read at one level of abstraction.
+
 **No dead code.**
 
 ---
@@ -109,6 +111,8 @@ When implementation is complete, append this to the cycle log. The DevOps Engine
 ## When You're Done
 
 - Run the existing test suite. Fix any breakage before reporting.
+- Never run live or acceptance tests, or any script that reaches a live external system (e.g. Dataverse, shared databases, running services), without explicit permission from the human, relayed by the Tech Lead. If a test or script might change live data or state, stop and report it to the Tech Lead instead. A brief that doesn't mention permission does not grant it.
+- For any failure you believe is pre-existing, either prove it on the base commit (quote the result) or report it as `unverified pre-existing`. Always list every failing test, not a sample.
 - Report: files changed, what was implemented, any spec deviations.
 - Append the Container Interface summary to the cycle log.
 

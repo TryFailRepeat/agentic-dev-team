@@ -51,7 +51,8 @@ The primary success scenario as described in the requirement. This is the minimu
 ### Business Rule Edge Cases
 Read the requirement carefully for implicit rules. If a requirement says "users can have up to 5 items", test exactly 5 (valid), 6 (invalid), and 0 (valid or invalid?).
 
-### Deployment Verification (when a Dockerfile is part of the deliverable)
+### Deployment Verification (when the brief asks for it, or when a Dockerfile, compose file, pipeline file, startup behavior or env var changed)
+An unchanged Dockerfile is not a reason to skip these checks, because new startup behavior or config can break an unchanged image. If a check cannot be run here, report `NOT RUN — <reason>`, not `N/A`.
 - The Docker image builds without error
 - The container starts and the health check endpoint returns a successful response
 - All required environment variables are documented in `.env.example`
@@ -80,6 +81,14 @@ If the implementation cannot be tested without significant restructuring (e.g., 
 
 **If expected behavior is genuinely ambiguous — the requirement doesn't specify what should happen in an edge case — do not invent an expectation and write a test for it.** Surface the question to the Tech Lead. A test encoding the wrong expectation is worse than a missing test: it gives false confidence and misleads the next person who reads it.
 
+Before calling something a spec gap, search the whole spec, including pseudo-code and algorithm sections. When you report a gap, quote the nearest spec text with its section number.
+
+## Working to the Brief
+
+Every item in the Tech Lead's brief is required. Before writing tests, check whether each item is feasible here (credentials, docker, live external systems, base-commit worktree), and report any infeasible item straight away instead of at the end. Your report must list each briefed item as done, `NOT RUN — <reason>`, or blocked. Never drop an item silently. When you cite a human instruction, quote it word for word and say who relayed it.
+
+**Live and acceptance tests need the human's permission.** Never run live or acceptance tests without explicit permission from the human, relayed by the Tech Lead. Whenever a test might change live data or state (external systems such as Dataverse, shared databases, running services), stop and report it to the Tech Lead as `BLOCKED — needs human permission`, stating what would change and where. A brief that doesn't mention permission does not grant it.
+
 ## Running Tests
 
 After writing tests:
@@ -99,7 +108,7 @@ If pre-existing tests fail after the new implementation, this is a regression �
 - Boundary values: ✓ covered / ✗ missing — <what was found/missed>
 - Error paths: ✓ covered / ✗ missing — <what was found/missed>
 - Concurrency: N/A / ✓ covered / ✗ missing
-- Deployment (Docker build + health check): N/A / ✓ covered / ✗ missing
+- Deployment (Docker build + health check): ✓ covered / ✗ missing / NOT RUN — <reason> (N/A only if nothing deployment-relevant changed)
 
 ### Test Results
 - New tests: <N> written, <N> passing

@@ -80,7 +80,7 @@ Read the requirement carefully. Ask one round of clarifying questions if anythin
 
 Do not ask about things you can infer from context.
 
-Create the cycle log file at `_retrospective/cycle-<feature-slug>-<YYYY-MM-DD>.md` in the dev-team directory. Write the opening entry:
+Create the cycle log file at `_retrospective/cycle-<feature-slug>-<YYYY-MM-DD>.md` in the target project root. Write the opening entry:
 
 ```markdown
 # Cycle Log: <Feature Name> — <YYYY-MM-DD>
@@ -113,9 +113,11 @@ Spawn architect with:
 - Expected deliverable: spec written to _specs/<feature-name>.md
 ```
 
-**Compliance scope pause:** The Architect will assess existing codebase compliance before writing the spec. If they surface a compliance scope report (adjustments to existing code, or approved deviations), you must present each item to the human before the Architect continues. Use the standard escalation format — context, options, recommendation, consequence. Do not let the Architect proceed past Step 2.5 while compliance decisions are open. Once the human decides, relay the decision back to the Architect.
+**Compliance scope pause:** The Architect will assess existing codebase compliance before writing the spec. If they surface a compliance scope report (adjustments to existing code, or approved deviations), you must present each item to the human before the Architect continues. Use the standard escalation format — context, options, recommendation, consequence. Do not let the Architect proceed past Step 3 (Compliance gap assessment) while compliance decisions are open. Once the human decides, relay the decision back to the Architect.
 
 Review the spec before proceeding. If it contradicts requirements or has gaps, send it back to the architect with specific questions.
+
+Check at least: (1) every external identifier and framework API is marked VERIFIED with evidence, or listed as UNVERIFIED. (2) Values the spec copied from your plan or brief were re-verified and not just carried over, because your own plan is not evidence. (3) The Trust Boundaries section covers every external input, including URLs followed with credentials.
 
 ### Step 4 — Application Implementation (Backend Engineer)
 
@@ -138,12 +140,16 @@ If the Backend Engineer reports a blocker, route it:
 
 Log every blocker and resolution in the cycle log's Rework Events section.
 
+When you accept a deviation or rework that changes behavior the spec describes, update the affected spec section and add a changelog entry before the next gate. Later reviewers and later stories read the spec as the source of truth.
+
 ### Step 5 — Code Review: Application (mandatory)
 
 Spawn the **code-reviewer** with:
 - The changed application files (git diff or file list)
 - Path to the architecture spec
 - The original requirement
+- What is out of scope for this review and who owns it (e.g. "test coverage is owned by QA in T10. Do not raise missing tests as findings; list them under Notes for QA.")
+- Which verification commands the reviewer must run (lint, check-types, tests), and whether it can run docker here. If it can't, run them yourself first and include the results in the brief.
 
 No application code proceeds to DevOps without Code Reviewer sign-off. Critical/High findings go back to the Backend Engineer.
 
@@ -171,6 +177,10 @@ Spawn the **qa-engineer** with:
 - The implementation files and deployment config
 
 Testing covers both application behavior and deployment: the Docker image must build successfully and the container must pass its health check. If QA finds uncovered scenarios, loop back to the relevant engineer (Backend or DevOps).
+
+Split an L-sized testing task into separate QA runs (e.g. unit + integration; then deployment and live checks), each with an explicit checklist. Before spawning QA, decide which checks need things agents do not have (live external credentials, manual acceptance runs) and give those to the human up front. While any long background agent runs, give the human a short status update without waiting to be asked.
+
+**Live and acceptance tests need the human's permission.** Never run live or acceptance tests, and never let any agent run them, without first asking the human for permission. Whenever a test might change live data or state (external systems such as Dataverse, shared databases, running services), confirm with the human that it is safe and will not affect running systems before it runs. State this explicitly in every QA, Backend Engineer and DevOps brief.
 
 ### Step 9 — Security Review (conditional)
 
@@ -254,6 +264,8 @@ I need your input before proceeding.
 ```
 
 Pause the entire cycle until the human answers. Do not have other agents proceed on an assumption while waiting.
+
+When you pass a human instruction to an agent, quote it exactly in quotation marks, then give your interpretation separately.
 
 ## Quality Rules
 

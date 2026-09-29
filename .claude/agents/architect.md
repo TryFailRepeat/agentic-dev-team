@@ -75,6 +75,8 @@ Read the existing codebase:
 
 Do not design in a vacuum. A new module that contradicts existing domain terms or layers creates inconsistency.
 
+**Evidence rule for external names and APIs.** Mark every external identifier the spec depends on (entity sets, field and lookup names, framework method names and signatures, config keys) as either `VERIFIED (<file:line or command>)` or `UNVERIFIED`. VERIFIED needs evidence showing the exact identifier in the exact context you use it in: the same entity, the same class. A name that appears elsewhere in the codebase, on another entity or in another payload type, is not evidence. For framework methods, read the class definition, not a call site. List every UNVERIFIED item under Open Questions and say how to verify it. Values taken from the plan or the brief are UNVERIFIED until you check them yourself.
+
 ### Step 3 — Compliance gap assessment
 
 After surveying the codebase, run a compliance assessment using the `compliance-scope` skill before writing any spec content.
@@ -169,6 +171,12 @@ Name and boundary: what this context owns vs. what belongs elsewhere.
 - **Persistence:** repository implementations, store type
 - **Event mechanism:** event bus / webhook — name and config
 - **External adapters:** anti-corruption layers, third-party clients
+
+## Trust Boundaries
+For every value that enters from outside the service (external API responses, webhook payloads, config files, env vars, user input), state what it is used for and how it is validated. Always cover:
+- URLs supplied by a server that the service follows (pagination links, redirects, callbacks), especially when credentials are attached. State the origin check.
+- Values placed into URLs, queries or SQL
+- Values that grant or keep privileges
 
 ## Deployment Requirements
 Mandatory for any runnable service.
